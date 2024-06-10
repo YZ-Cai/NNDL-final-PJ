@@ -159,7 +159,9 @@ def get_network(args):
     elif args.net == 'resnet50_pytorch':
         from models.resnet import resnet50_pytorch
         net = resnet50_pytorch()
-
+    elif args.net == 'vit':
+        from models.vit import ViT
+        net = ViT()
     else:
         print('the network name you have entered is not supported yet')
         sys.exit()

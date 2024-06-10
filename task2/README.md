@@ -21,9 +21,10 @@ and compared three different data argumentation methods ([Mixup](https://arxiv.o
 
 ## Dependencies
 
-- [PyTorch v1.7.1](https://pytorch.org/)
+- `PyTorch`
 - `numpy`
 - `matplotlib`
+- `einops`
 
 ## Structure
 ```angular2html
