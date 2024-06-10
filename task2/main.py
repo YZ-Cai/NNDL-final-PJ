@@ -14,7 +14,7 @@ from torch import optim
 from torch.utils.tensorboard import SummaryWriter
 from data.dataloader import get_training_dataloader, get_test_dataloader
 from conf import settings
-from utils import get_network, WarmUpLR, most_recent_folder, most_recent_weights, last_epoch, best_acc_weights
+from utils import get_network, WarmUpLR, most_recent_folder, most_recent_weights, last_epoch, best_acc_weights, get_num_parameters
 from functions import train, eval_training
 
 
@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     # load model
     net = get_network(args)
+    print(f"the number of parameters of the model is {get_num_parameters(net)}")
 
     # load data
     if args.data == "cifar100":

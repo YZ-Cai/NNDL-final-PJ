@@ -323,7 +323,6 @@ def best_acc_weights(weights_folder):
 
 
 # plot
-
 def plot_images(images, img_per_row=8):
     # Plot image grid with labels
 
@@ -342,3 +341,8 @@ def plot_images(images, img_per_row=8):
         plt.xticks([])
         plt.yticks([])
     plt.show()
+
+
+# get number of parameters in the model
+def get_num_parameters(model):
+    return sum(p.numel() for p in model.parameters())
