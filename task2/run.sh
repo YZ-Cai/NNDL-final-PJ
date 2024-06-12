@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # run resnet18
-nohup python main.py --net resnet18 --device cuda:3 > run_resnet18.txt 2>&1 &
+nohup python train.py --net resnet18 --device cuda:1 > run_resnet18.txt 2>&1 &
+python test.py --net resnet18 --device cuda:1
 
 # run vit
-nohup python main.py --net vit --device cuda:2 > run_vit.txt 2>&1 &
+nohup python train.py --net vit --device cuda:1 > run_vit.txt 2>&1 &
+python test.py --net vit --device cuda:1
 
 # run grid search for resnet18
 nohup bash resnet18_grid_search.sh > resnet18_grid_search.txt 2>&1 &

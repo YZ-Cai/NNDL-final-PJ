@@ -12,6 +12,7 @@ Table of Contents
    * [Key Features](#key-features)
    * [Training](#training)
    * [Trained Models](#trained-models)
+   * [Testing](#testing)
    * [Results](#results)
 
 ## Introduction
@@ -42,7 +43,6 @@ In this project, we use the **ResNet-18** and **ViT** to run image classificatio
 │   ├── __init__.py
 │   └── dataloader.py
 ├── functions.py
-├── main.py
 ├── models
 │   ├── attention.py
 │   ├── densenet.py
@@ -70,6 +70,8 @@ In this project, we use the **ResNet-18** and **ViT** to run image classificatio
 │   └── *.csv
 ├── resnet18_grid_search.sh
 ├── run.sh
+├── test.py
+├── train.py
 ├── utils.py
 └── vit_grid_search.sh
 ```
@@ -82,7 +84,8 @@ In this project, we use the **ResNet-18** and **ViT** to run image classificatio
 - `utils.py`: Some useful functions
 - `functions.py`: The functions for training evaluating models
 - `plot.py`: Image visualization of the *CIFAR100* dataset
-- `main.py`: This is the main program of the project
+- `train.py`: Training the model
+- `test.py`: Testing the model
 - `run.sh`: a simple bash script to run the **ResNet-18** and **ViT** models with best parameters
 - `resnet18_grid_search.sh`: a bash script to run hyper-parameter grid search for **ResNet-18**
 - `vit_grid_search.sh`: a bash script to run hyper-parameter grid search for **ViT**
@@ -100,7 +103,7 @@ Hyper-parameter Tuning:
 
 ## Training
 
-Run commands below to reproduce results on *CIFAR100* (dataset auto-downloads on first use).
+Run command below to reproduce results on *CIFAR100* (dataset auto-downloads on first use).
 
 ```bash
 $ python main.py
@@ -115,12 +118,22 @@ $ python main.py
     --warmup-num 0                  # the epoch number of warmup, default 0, means no warmup
 ```
 
-
 ## Trained Models
 
 You can download our trained model from [This Link (Password: qqpb)](https://pan.baidu.com/s/10g1PU_lTJH7ghU21uZkGzw). 
 It has a folder named `checkpoint`, which should be put it in current folder.
 
+## Testing
+
+Run command below to reproduce results on *CIFAR100* (dataset auto-downloads on first use), which automatically uses the latest checkpoint for the specified model.
+
+```bash
+$ python test.py
+    --device cuda:0                 # the device, default cpu
+    --net resnet18                  # the neural network, default resnet18
+    --data cifar100                 # the dataset, default cifar100
+    --batch-size 128                # the batch size, default 128
+```
 
 ## Results
 

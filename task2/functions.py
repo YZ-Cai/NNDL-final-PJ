@@ -125,3 +125,28 @@ def eval_training(model, data_loader, device, loss_function, epoch=0, writer=Non
 
     return correct.float() / len(data_loader.dataset)
 
+
+@torch.no_grad()
+def eval_testing(model, data_loader, device):
+    start = time.time()
+    model.eval()
+
+    correct = 0.0
+
+    for (images, labels) in data_loader:
+
+        if device != "cpu":
+            labels = labels.to(device)
+            images = images.to(device)
+
+        outputs = model(images)
+        _, preds = outputs.max(1)
+        correct += preds.eq(labels).sum()
+
+    finish = time.time()
+    print('Test set Accuracy: {:.4f}, Time consumed:{:.2f}s'.format(
+        correct.float() / len(data_loader.dataset),
+        finish - start
+    ))
+    print()
+

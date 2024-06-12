@@ -271,13 +271,14 @@ def most_recent_folder(net_weights, fmt):
     folders = os.listdir(net_weights)
 
     # filter out empty folders
-    folders = [f for f in folders if len(os.listdir(os.path.join(net_weights, f)))]
+    folders = [(f, '_'.join(f.split('_' )[:len(fmt.split('_'))]))
+               for f in folders if len(os.listdir(os.path.join(net_weights, f)))]
     if len(folders) == 0:
         return ''
 
     # sort folders by folder created time
-    folders = sorted(folders, key=lambda f: datetime.datetime.strptime(f, fmt))
-    return folders[-1]
+    folders = sorted(folders, key=lambda f: datetime.datetime.strptime(f[1], fmt))
+    return folders[-1][0]
 
 
 def most_recent_weights(weights_folder):

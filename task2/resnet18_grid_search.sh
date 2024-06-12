@@ -11,7 +11,7 @@ for lr in "${lrs[@]}"; do
         for batch_size in "${batch_sizes[@]}"; do
             echo "-------------------------------------------------------"
             echo "lr: $lr, optimizer: $optimizer, batch_size: $batch_size"
-            python main.py \
+            python train.py \
                 --net "resnet18" \
                 --lr "$lr" \
                 --optimizer "$optimizer" \

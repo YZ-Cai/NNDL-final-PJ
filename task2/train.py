@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 """
 @Project ：NNDL_final 
-@File    ：main.py
+@File    ：train.py
 @Author  ：Iker Zhe, Yuzheng Cai
 @Date    ：2024/6/10 21:30 
 """
@@ -129,7 +129,7 @@ if __name__ == '__main__':
         if best_weights:
             weights_path = os.path.join(settings.CHECKPOINT_PATH, args.net, recent_folder, best_weights)
             print('found best acc weights file:{}'.format(weights_path))
-            print('load best training file to test acc...')
+            print('load best training checkpoint to test acc...')
             net.load_state_dict(torch.load(weights_path))
             best_acc = eval_training(
                 model=net,
