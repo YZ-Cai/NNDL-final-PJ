@@ -6,8 +6,8 @@
 @Author  ：Iker Zhe
 @Date    ：2021/6/8 16:28 
 """
-from argumentation.mixup import mixup_data
-from argumentation.cutmix import cutmix_data
+from augmentation.mixup import mixup_data
+from augmentation.cutmix import cutmix_data
 from conf import settings
 from utils import plot_images
 from data.dataloader import get_training_dataloader
@@ -16,10 +16,10 @@ from data.dataloader import get_training_dataloader
 if __name__ == '__main__':
     train_loader = get_training_dataloader(
         mean=settings.CIFAR100_TRAIN_MEAN,
-        std=settings.CIFAR10_TRAIN_STD,
+        std=settings.CIFAR100_TRAIN_STD,
         batch_size=64,
         data="cifar100",
-        argumentation="cutout"
+        augmentation="cutout"
     )
 
     for batch_index, (images, labels) in enumerate(train_loader):

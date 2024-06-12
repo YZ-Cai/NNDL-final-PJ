@@ -91,7 +91,8 @@ if __name__ == '__main__':
 
     else:
         checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net,
-                                       settings.TIME_NOW + "_" + args.net + "_" + args.data)
+                                       settings.TIME_NOW + "_" + args.net + "_" + args.data + 
+                                       "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
 
     # settings
     # use tensorboard
@@ -102,7 +103,8 @@ if __name__ == '__main__':
     # so the only way is to create a new tensorboard log
     writer = SummaryWriter(log_dir=os.path.join(
                            settings.LOG_DIR, args.net,
-                           settings.TIME_NOW + "_" + args.net + "_" + args.data))
+                           settings.TIME_NOW + "_" + args.net + "_" + args.data) + 
+                           "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
     input_tensor = torch.Tensor(1, 3, 32, 32)
     if args.device != "cpu":
         input_tensor = input_tensor.to(args.device)
@@ -112,6 +114,13 @@ if __name__ == '__main__':
     if not os.path.exists(checkpoint_path):
         os.makedirs(checkpoint_path)
     checkpoint_path = os.path.join(checkpoint_path, '{net}-{epoch}-{type}.pth')
+    
+    # create result folder to save accuracy
+    res_path = os.path.join(settings.RES_DIR, 
+                            args.net + "_" + args.data + "_" + args.optimizer + "_lr" + str(args.lr) + 
+                            "_bs" + str(args.batch_size) + "_accuracy.csv")
+    with open(res_path, 'w') as f:
+        f.write("epoch,test_acc\n")
 
     # train
     best_acc = 0.0
@@ -148,7 +157,8 @@ if __name__ == '__main__':
         if args.resume:
             if epoch <= resume_epoch:
                 continue
-
+        
+        # train the model
         train(
             model=net,
             data_loader=train_loader,
@@ -160,6 +170,8 @@ if __name__ == '__main__':
             warmup_dict=warmup_dict,
             writer=writer
         )
+        
+        # test accuracy
         acc = eval_training(
             model=net,
             data_loader=test_loader,
@@ -168,6 +180,8 @@ if __name__ == '__main__':
             epoch=epoch,
             writer=writer
         )
+        with open(res_path, 'a') as f:
+            f.write(f"{epoch},{acc}\n")
 
         # start to save best performance models after learning rate decay to 0.01
         if epoch > settings.MILESTONES[1] and best_acc < acc:

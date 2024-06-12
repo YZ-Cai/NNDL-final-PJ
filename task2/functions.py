@@ -10,8 +10,8 @@ import os
 import time
 import random
 import torch
-from argumentation.cutmix import cutmix_data, cutmix_criterion
-from argumentation.mixup import mixup_data, mixup_criterion
+from augmentation.cutmix import cutmix_data, cutmix_criterion
+from augmentation.mixup import mixup_data, mixup_criterion
 
 
 def train(model, data_loader, device, optimizer, loss_function, epoch, batch_size, warmup_dict=None, writer=None,
