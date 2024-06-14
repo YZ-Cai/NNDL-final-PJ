@@ -2,7 +2,10 @@ __pycache__
 
 # data
 *.txt
+*.tar*
+*.bin
 !requirements.txt
+!LICENSE.txt
 
 # outputs
 runs

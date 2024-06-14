@@ -26,6 +26,7 @@ In this project, we use the **ResNet-18** and **ViT** to run image classificatio
 - `numpy`
 - `matplotlib`
 - `einops`
+- `tensorboard`
 
 ## Structure
 ```angular2html

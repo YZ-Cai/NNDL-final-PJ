@@ -2,8 +2,8 @@
 configurations for this project
 @Project ：NNDL_final
 @File    ：global_settings.py
-@Author  ：Iker Zhe
-@Date    ：2021/6/5 14:26
+@Author  ：Iker Zhe, Yuzheng Cai
+@Date    ：2021/6/10 14:26
 """
 from datetime import datetime
 
@@ -15,6 +15,10 @@ CIFAR100_TRAIN_STD = (0.2673342858792401, 0.2564384629170883, 0.2761504713256840
 # mean and std of cifar10 dataset
 CIFAR10_TRAIN_MEAN = (0.4940607, 0.4850613, 0.45037037)
 CIFAR10_TRAIN_STD = (0.20085774, 0.19870903, 0.20153421)
+
+# mean and std of imagenet dataset
+IMAGENET_TRAIN_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_TRAIN_STD = (0.229, 0.224, 0.225)
 
 # directory to save weights file
 CHECKPOINT_PATH = 'checkpoint'

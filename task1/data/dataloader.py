@@ -11,8 +11,8 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 
-def get_training_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, data="cifar100",
-                            height=32, width=32):
+def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=True, 
+                            data="cifar100", height=32, width=32):
     """ return training dataloader
     Args:
         mean: mean of cifar100 training dataset
@@ -58,7 +58,8 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=Tru
     return train_loader
 
 
-def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, data="cifar10", height=32, width=32):
+def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, 
+                        data="cifar100", height=32, width=32):
     """ return training dataloader
     Args:
         mean: mean of cifar100 test dataset
