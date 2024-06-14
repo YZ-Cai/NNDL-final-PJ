@@ -21,7 +21,7 @@ from functions import train, eval_training
 if __name__ == '__main__':
     # Settings
     parser = argparse.ArgumentParser()
-    parser.add_argument('-resume', action='store_true', default=False, help='resume training')
+    parser.add_argument('--resume', action='store_true', default=False, help='resume training')
     parser.add_argument('--device', type=str, default='cpu', help='the device: cpu or gpu')
     parser.add_argument('--lr', type=float, default=0.1, help='initial learning rate')
     parser.add_argument('--optimizer', type=str, default='sgd', help='optimizer')
@@ -60,19 +60,21 @@ if __name__ == '__main__':
         data=args.data,
     )
 
-    # construct loss function and optimizer
+    # loss function
     if args.criterion == "CrossEntropyLoss":
         loss_function = nn.CrossEntropyLoss()
     else:
         raise ValueError("the loss function should be cross entropy loss, but {} is given".format(args.criterion))
+    
+    # optimizer
     if args.optimizer == "sgd":
         optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
     elif args.optimizer == "adam":
         optimizer = optim.Adam(net.parameters(), lr=args.lr, weight_decay=5e-4)
     else:
         raise ValueError("the optimizer should be 'adam' or 'sgd', but got '%s'" % args.optimizer)
-    train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=settings.MILESTONES,
-                                                     gamma=0.2)  # learning rate decay
+    train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=settings.MILESTONES, gamma=0.2)
+    
     # whether to warmup or not
     if args.warmup_num:
         iter_per_epoch = len(train_loader)

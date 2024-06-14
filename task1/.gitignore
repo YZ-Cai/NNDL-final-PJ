@@ -2,6 +2,7 @@ __pycache__
 
 # data
 *.txt
+!requirements.txt
 
 # outputs
 runs
