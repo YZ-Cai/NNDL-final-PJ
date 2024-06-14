@@ -12,6 +12,7 @@ import argparse
 import torch.nn as nn
 from torch import optim
 from conf import settings
+from supervised.resnet import resnet18
 from supervised_pretrained import PretrainedModel
 from data.dataloader import get_training_dataloader, get_test_dataloader
 
@@ -60,8 +61,13 @@ if __name__ == '__main__':
     device = args.device
     if args.model_type == "SupervisedPretrained":
         pretrained_model = PretrainedModel('resnet18', device)
-        feature_dim = pretrained_model.get_feature_dim()
-        model = nn.Linear(feature_dim, 100, device=device)
+        model = nn.Linear(pretrained_model.feature_dim(), 100, device=device)
+    elif args.model_type == "Supervised":
+        pretrained_model = None
+        model = resnet18().to(device)
+    else:
+        raise ValueError("the model type should be UnsupervisedPretrained SupervisedPretrained or Supervised, \
+                          but {} is given".format(args.model_type))
         
     # loss function
     if args.criterion == "CrossEntropyLoss":
@@ -92,8 +98,11 @@ if __name__ == '__main__':
                 images = images.to(device)
             optimizer.zero_grad()
             
-            output_features = pretrained_model.get_features(images)
-            outputs = model(output_features)
+            if pretrained_model == None:
+                outputs = model(images)
+            else:
+                output_features = pretrained_model.get_features(images)
+                outputs = model(output_features)
             
             # train loss and accuracy
             loss = criterion(outputs, labels)
@@ -115,5 +124,4 @@ if __name__ == '__main__':
             
         # test, TODO: function
         
-        print(f"batch {batch_index} loss: {loss.item()}, acc: {acc.item()}")
     

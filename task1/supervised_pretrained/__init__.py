@@ -23,7 +23,7 @@ class PretrainedModel:
         input = torch.autograd.Variable(input, requires_grad=False)
         return self.model.features(input).view(input.shape[0], -1)
     
-    def get_feature_dim(self):
+    def feature_dim(self):
         return 25088
 
 
