@@ -5,23 +5,23 @@ useful functions
 @Author  ：Iker Zhe
 @Date    ：2021/6/6 14:21
 """
-import datetime
+
 import os
 import re
-import torch.nn as nn
-from torch import optim
-from conf import settings
-from supervised.resnet import resnet18
-from supervised_pretrained import PretrainedModel
-import matplotlib.gridspec as gridspec
 import numpy
 import math
 import torch
+import datetime
 import torchvision
-import torchvision.transforms as transforms
+import torch.nn as nn
 from matplotlib import pyplot as plt
+import matplotlib.gridspec as gridspec
+import torchvision.transforms as transforms
 from torch.optim.lr_scheduler import _LRScheduler
 from torch.utils.data import DataLoader
+from supervised.resnet import resnet18
+from supervised_pretrained import PretrainedModel
+from self_supervised_pretrained import ResNetSimCLR
 
 
 def get_models(args):
@@ -29,7 +29,11 @@ def get_models(args):
     return given network
     """
     device = args.device
-    if args.model_type == "SupervisedPretrained":
+    if args.model_type == "SelfSupervisedPretrained":
+        pretrained_model = None
+        model = ResNetSimCLR(base_model='resnet18', out_dim=512, mode='test').to(device)
+        model.load_for_testing(args.pretrained_model_path, device)
+    elif args.model_type == "SupervisedPretrained":
         pretrained_model = PretrainedModel('resnet18', device)
         model = nn.Linear(pretrained_model.feature_dim(), 100, device=device)
     elif args.model_type == "Supervised":

@@ -33,8 +33,8 @@ Unzip the training files
 ```bash
 tar -xvf ILSVRC2012_img_train.tar -C ./train
 cd ./train
-for f in n*/*.tar; do
-    dir=$(basename $(dirname $f))
+for f in *.tar; do
+    dir=$(basename $f .tar)
     mkdir -p $dir
     tar -xvf $f -C $dir
 done

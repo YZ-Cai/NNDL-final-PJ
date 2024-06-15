@@ -31,6 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('--model-type', type=str, default="SelfSupervisedPretrained", 
                         help='the model type: SelfSupervisedPretrained or SupervisedPretrained or Supervised')
     parser.add_argument('--data', type=str, default='cifar100', help="the dataset cifar100 or cifar10")
+    parser.add_argument('--pretrained-model-path', type=str, default='')
     args = parser.parse_args()
     
     # load model
