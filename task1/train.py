@@ -28,8 +28,8 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer', type=str, default='sgd', help='optimizer')
     parser.add_argument('--criterion', type=str, default='CrossEntropyLoss', help='criterion')
     parser.add_argument('--batch-size', type=int, default=128, help='batch size')
-    parser.add_argument('--model-type', type=str, default="SupervisedPretrained", 
-                        help='the model type: SupervisedPretrained or Supervised or UnsupervisedPretrained')
+    parser.add_argument('--model-type', type=str, default="SelfSupervisedPretrained", 
+                        help='the model type: SelfSupervisedPretrained or SupervisedPretrained or Supervised')
     parser.add_argument('--data', type=str, default='cifar100', help="the dataset cifar100 or cifar10")
     args = parser.parse_args()
     

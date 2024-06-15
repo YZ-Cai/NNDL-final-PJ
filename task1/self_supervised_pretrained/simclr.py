@@ -4,7 +4,6 @@ import torch
 import torch.nn.functional as F
 from torch.cuda.amp import GradScaler, autocast
 from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
 from .utils import save_config_file, accuracy, save_checkpoint
 
 torch.manual_seed(0)
@@ -20,6 +19,7 @@ class SimCLR(object):
         self.writer = SummaryWriter(self.args.log_dir)
         logging.basicConfig(filename=os.path.join(self.writer.log_dir, 'training.log'), level=logging.DEBUG)
         self.criterion = torch.nn.CrossEntropyLoss().to(self.args.device)
+
 
     def info_nce_loss(self, features):
 
@@ -49,7 +49,7 @@ class SimCLR(object):
         return logits, labels
 
 
-    def train(self, train_loader):
+    def train(self, data_loader):
 
         scaler = GradScaler(enabled=self.args.fp16_precision)
 
@@ -60,7 +60,7 @@ class SimCLR(object):
         logging.info(f"Start SimCLR training for {self.args.epochs} epochs.")
 
         for epoch_counter in range(self.args.epochs):
-            for images, _ in tqdm(train_loader):
+            for batch_index, (images, _) in enumerate(data_loader):
                 images = torch.cat(images, dim=0)
 
                 images = images.to(self.args.device)
@@ -76,6 +76,14 @@ class SimCLR(object):
 
                 scaler.step(self.optimizer)
                 scaler.update()
+                
+                print('Training Epoch: {epoch} [{trained_samples}/{total_samples}]\tLoss: {:0.4f}\tLR: {:0.6f}'.format(
+                    loss.item(),
+                    self.optimizer.param_groups[0]['lr'],
+                    epoch=epoch_counter,
+                    trained_samples=batch_index * self.args.batch_size + len(images),
+                    total_samples=len(data_loader.dataset)
+                ))
 
                 if n_iter % self.args.log_every_n_steps == 0:
                     top1, top5 = accuracy(logits, labels, topk=(1, 5))

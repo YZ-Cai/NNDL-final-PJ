@@ -1,3 +1,4 @@
+import os
 from torchvision.transforms import transforms
 from .gaussian_blur import GaussianBlur
 from torchvision import transforms, datasets
@@ -34,10 +35,11 @@ class ContrastiveLearningDataset:
                                                               n_views),
                                                           download=True),
                           
-                          'imagenet': lambda: datasets.ImageNet(self.root_folder, split='train',
+                          'imagenet': lambda: datasets.ImageNet(os.path.join(self.root_folder, 'imagenet'),
                                                                 transform=ContrastiveLearningViewGenerator(
                                                                      self.get_simclr_pipeline_transform(224),
-                                                                     n_views))}
+                                                                     n_views)
+                                                                )}
 
         try:
             dataset_fn = valid_datasets[name]

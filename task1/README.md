@@ -13,7 +13,7 @@
 
 Based on ResNet-18 model, we compare the following three different methods:
 
-- **Unsupervised Pretrain**. We use [SimCLR](https://proceedings.mlr.press/v119/chen20j/chen20j.pdf) built upon ResNet-18 for unsupervised pretraining on [ImageNet](https://www.image-net.org), and the source codes come from a [pytorch implementation](https://github.com/sthalles/SimCLR). Based on the features from the last linear layer of the pretrained model, we train a linear classifier on CIFAR-100.
+- **Self-supervised Pretrain**. We use [SimCLR](https://proceedings.mlr.press/v119/chen20j/chen20j.pdf) built upon ResNet-18 for self-supervised pretraining on [ImageNet](https://www.image-net.org), and the source codes come from a [pytorch implementation](https://github.com/sthalles/SimCLR). Based on the features from the last linear layer of the pretrained model, we train a linear classifier on CIFAR-100.
 - **Supervised Pretrain**. The supervised pretrained ResNet-18 model on [ImageNet](https://www.image-net.org) comes from [pretrained-models.pytorch](https://github.com/Cadene/pretrained-models.pytorch). Based on the features from the last linear layer of the pretrained model, we train a linear classifier on CIFAR-100.
 - **Supervised Model**. We directly train the ResNet-18 model on CIFAR-100.
 
@@ -29,11 +29,15 @@ wget https://www.image-net.org/data/ILSVRC/2012/ILSVRC2012_devkit_t12.tar.gz
 wget https://www.image-net.org/data/ILSVRC/2012/ILSVRC2012_img_train.tar
 ```
 
-Unzip the files
+Unzip the training files
 ```bash
 tar -xvf ILSVRC2012_img_train.tar -C ./train
 cd ./train
-for d in n*; do tar -xvf $d/*.tar; done
+for f in n*/*.tar; do
+    dir=$(basename $(dirname $f))
+    mkdir -p $dir
+    tar -xvf $f -C $dir
+done
 ```
 
 # Supervised Pretrained ResNet-18

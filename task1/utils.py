@@ -36,7 +36,7 @@ def get_models(args):
         pretrained_model = None
         model = resnet18().to(device)
     else:
-        raise ValueError("the model type should be UnsupervisedPretrained SupervisedPretrained or Supervised, \
+        raise ValueError("the model type should be SelfSupervisedPretrained, SupervisedPretrained or Supervised, \
                           but {} is given".format(args.model_type))
     return pretrained_model, model
 
