@@ -17,7 +17,7 @@ class SimCLR(object):
         self.model = kwargs['model'].to(self.args.device)
         self.optimizer = kwargs['optimizer']
         self.scheduler = kwargs['scheduler']
-        self.writer = SummaryWriter(args.log_dir)
+        self.writer = SummaryWriter(self.args.log_dir)
         logging.basicConfig(filename=os.path.join(self.writer.log_dir, 'training.log'), level=logging.DEBUG)
         self.criterion = torch.nn.CrossEntropyLoss().to(self.args.device)
 
@@ -30,15 +30,11 @@ class SimCLR(object):
         features = F.normalize(features, dim=1)
 
         similarity_matrix = torch.matmul(features, features.T)
-        # assert similarity_matrix.shape == (
-        #     self.args.n_views * self.args.batch_size, self.args.n_views * self.args.batch_size)
-        # assert similarity_matrix.shape == labels.shape
 
         # discard the main diagonal from both: labels and similarities matrix
         mask = torch.eye(labels.shape[0], dtype=torch.bool).to(self.args.device)
         labels = labels[~mask].view(labels.shape[0], -1)
         similarity_matrix = similarity_matrix[~mask].view(similarity_matrix.shape[0], -1)
-        # assert similarity_matrix.shape == labels.shape
 
         # select and combine multiple positives
         positives = similarity_matrix[labels.bool()].view(labels.shape[0], -1)
@@ -51,6 +47,7 @@ class SimCLR(object):
 
         logits = logits / self.args.temperature
         return logits, labels
+
 
     def train(self, train_loader):
 
@@ -95,12 +92,13 @@ class SimCLR(object):
             logging.debug(f"Epoch: {epoch_counter}\tLoss: {loss}\tTop1 accuracy: {top1[0]}")
 
         logging.info("Training has finished.")
+        
         # save model checkpoints
-        checkpoint_name = 'checkpoint_{:04d}.pth.tar'.format(self.args.epochs)
+        checkpoint_name = f'checkpoint_{self.args.epochs}.pth.tar'
         save_checkpoint({
             'epoch': self.args.epochs,
             'arch': self.args.arch,
             'state_dict': self.model.state_dict(),
             'optimizer': self.optimizer.state_dict(),
-        }, is_best=False, filename=os.path.join(self.writer.log_dir, checkpoint_name))
-        logging.info(f"Model checkpoint and metadata has been saved at {self.writer.log_dir}.")
+        }, is_best=False, filename=os.path.join(self.args.checkpoint_path, checkpoint_name))
+        logging.info(f"Model checkpoint and metadata has been saved at {self.args.checkpoint_path}.")

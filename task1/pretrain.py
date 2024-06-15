@@ -27,22 +27,27 @@ if __name__ == '__main__':
     parser.add_argument('--batch-size', type=int, default=128, help='batch size')
     parser.add_argument('--model_type', type=str, default="unsupervised", help='the model type: unsupervised')
     parser.add_argument('--data', type=str, default='imagenet', help="the dataset stl10 or cifar10 or imagenet")
+    parser.add_argument('--sample-ratio', type=float, default=0.01, help='the sample ratio of the dataset')
     parser.add_argument('--n-views', default=2, type=int, help='Number of views for contrastive learning training.')
     parser.add_argument('--temperature', default=0.07, type=float, help='softmax temperature (default: 0.07)')
     parser.add_argument('--epochs', default=200, type=int, help='number of total epochs to run')
     parser.add_argument('--fp16-precision', action='store_true', help='Whether or not to use 16-bit precision GPU training.')
     parser.add_argument('--log-every-n-steps', default=100, type=int, help='Log every n steps')
     parser.add_argument('--arch', type=str, default='resnet18', help='model architecture: resnet18')
+    parser.add_argument('--out_dim', default=512, type=int, help='feature dimension (default: 512)')
     args = parser.parse_args()
     
     # data
     dataset = ContrastiveLearningDataset('./data')
     train_dataset = dataset.get_dataset(args.data, args.n_views)
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
-                                               num_workers=args.workers, pin_memory=True, drop_last=True)
     
-    # print how many images in the data
-    print(f"the number of images in the dataset is {len(train_dataset)}")
+    # sample some data for training
+    num_train = int(len(train_dataset) * args.sample_ratio)
+    indices = torch.randperm(len(train_dataset))[:num_train]
+    train_dataset = torch.utils.data.Subset(train_dataset, indices)    
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
+                                               num_workers=32, pin_memory=True, drop_last=True)
+    print(f"the number of images for training is {num_train}")
 
     # model
     if args.model_type == "unsupervised":
@@ -67,10 +72,13 @@ if __name__ == '__main__':
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=len(train_loader), eta_min=0,
                                                            last_epoch=-1)
     
-    # specify the tensor board log directory
-    args.log_dir = os.path.join(settings.LOG_DIR, 'unsupervised_pretraining',
+    # specify the directory
+    args.log_dir = os.path.join(settings.LOG_DIR, 'UnsupervisedPretraining',
                                 settings.TIME_NOW + "_" + args.arch + "_" + args.data) + \
                                 "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size)
+    args.checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.model_type,
+                                        settings.TIME_NOW + "_" + args.model_type + "_" + args.data + 
+                                        "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
     
     # train the unsupervised pretraining model          
     simclr = SimCLR(model=model, optimizer=optimizer, scheduler=scheduler, args=args)

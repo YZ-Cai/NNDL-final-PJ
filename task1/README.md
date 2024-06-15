@@ -23,9 +23,17 @@ To run the codes, please follow the following instructions.
 
 Download necessary files of [ImageNet](https://www.image-net.org/challenges/LSVRC/2012/2012-downloads.php) dataset into `./data`:
 ```bash
-cd ./data
+mkdir -p ./data/imagenet/train
+cd ./data/imagenet
 wget https://www.image-net.org/data/ILSVRC/2012/ILSVRC2012_devkit_t12.tar.gz
 wget https://www.image-net.org/data/ILSVRC/2012/ILSVRC2012_img_train.tar
+```
+
+Unzip the files
+```bash
+tar -xvf ILSVRC2012_img_train.tar -C ./train
+cd ./train
+for d in n*; do tar -xvf $d/*.tar; done
 ```
 
 # Supervised Pretrained ResNet-18
