@@ -27,6 +27,8 @@ In this project, we use the **ResNet-18** and **ViT** to run image classificatio
 - `matplotlib`
 - `einops`
 - `tensorboard`
+- `tabulate`
+- `pandas`
 
 ## Structure
 ```angular2html
@@ -138,4 +140,53 @@ $ python test.py
 
 ## Results
 
-TODO
+| model    | optimizer   |   learning_rate |   batch_size |   best_test_accuracy |
+|:---------|:------------|----------------:|-------------:|---------------------:|
+| resnet18 | sgd         |           0.1   |           64 |               0.7826 |
+| resnet18 | sgd         |           0.01  |           32 |               0.7814 |
+| resnet18 | sgd         |           0.1   |          128 |               0.7757 |
+| resnet18 | sgd         |           0.1   |          256 |               0.7687 |
+| resnet18 | sgd         |           0.1   |           32 |               0.7683 |
+| resnet18 | sgd         |           0.01  |           64 |               0.7672 |
+| resnet18 | sgd         |           0.001 |           32 |               0.7567 |
+| resnet18 | sgd         |           0.01  |          128 |               0.7561 |
+| resnet18 | adam        |           0.001 |          256 |               0.7468 |
+| resnet18 | sgd         |           0.01  |          256 |               0.7463 |
+| resnet18 | adam        |           0.001 |          128 |               0.7319 |
+| resnet18 | sgd         |           0.001 |           64 |               0.729  |
+| resnet18 | sgd         |           0.001 |          128 |               0.6956 |
+| resnet18 | adam        |           0.001 |           64 |               0.6788 |
+| resnet18 | adam        |           0.001 |           32 |               0.6383 |
+| resnet18 | sgd         |           0.001 |          256 |               0.6377 |
+| vit      | sgd         |           0.01  |           64 |               0.5378 |
+| vit      | sgd         |           0.01  |           32 |               0.5319 |
+| vit      | sgd         |           0.01  |          128 |               0.5261 |
+| vit      | sgd         |           0.001 |           32 |               0.5089 |
+| vit      | sgd         |           0.01  |          256 |               0.5077 |
+| vit      | sgd         |           0.1   |          256 |               0.4909 |
+| vit      | sgd         |           0.001 |           64 |               0.4741 |
+| resnet18 | adam        |           0.01  |          256 |               0.4565 |
+| vit      | adam        |           0.001 |          256 |               0.4492 |
+| vit      | sgd         |           0.1   |          128 |               0.4407 |
+| vit      | adam        |           0.001 |          128 |               0.4297 |
+| resnet18 | adam        |           0.01  |          128 |               0.4273 |
+| vit      | sgd         |           0.001 |          128 |               0.4129 |
+| vit      | adam        |           0.001 |           64 |               0.4001 |
+| resnet18 | adam        |           0.01  |           64 |               0.3931 |
+| vit      | sgd         |           0.1   |           64 |               0.3895 |
+| vit      | adam        |           0.001 |           32 |               0.3802 |
+| resnet18 | adam        |           0.01  |           32 |               0.3418 |
+| vit      | sgd         |           0.001 |          256 |               0.332  |
+| resnet18 | adam        |           0.1   |          128 |               0.3258 |
+| resnet18 | adam        |           0.1   |           64 |               0.2939 |
+| vit      | adam        |           0.01  |          256 |               0.2844 |
+| vit      | sgd         |           0.1   |           32 |               0.2782 |
+| resnet18 | adam        |           0.1   |          256 |               0.2763 |
+| resnet18 | adam        |           0.1   |           32 |               0.2733 |
+| vit      | adam        |           0.01  |          128 |               0.2453 |
+| vit      | adam        |           0.01  |           64 |               0.2315 |
+| vit      | adam        |           0.01  |           32 |               0.2276 |
+| vit      | adam        |           0.1   |           64 |               0.2164 |
+| vit      | adam        |           0.1   |          128 |               0.205  |
+| vit      | adam        |           0.1   |          256 |               0.1804 |
+| vit      | adam        |           0.1   |           32 |               0.1586 |
