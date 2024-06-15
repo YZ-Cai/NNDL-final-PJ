@@ -11,8 +11,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 
-def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=True, 
-                            data="cifar100", height=32, width=32):
+def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=True, data="cifar100"):
     """ return training dataloader
     Args:
         mean: mean of cifar100 training dataset
@@ -21,13 +20,11 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=Tr
         num_workers: dataloader num_works
         shuffle: whether to shuffle
         data: cifar100 or cifar10
-        cutout_length: the length of patch in cutout
     Returns: train_data_loader:torch dataloader object
     """
     # construct transform
     transform_train = transforms.Compose([
-        transforms.Resize((height, width)),
-        transforms.RandomCrop((height, width), padding=min(height, width)//8),
+        transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.RandomRotation(15),
         transforms.ToTensor(),
@@ -58,8 +55,7 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=Tr
     return train_loader
 
 
-def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, 
-                        data="cifar100", height=32, width=32):
+def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, data="cifar100"):
     """ return training dataloader
     Args:
         mean: mean of cifar100 test dataset
@@ -73,7 +69,6 @@ def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True,
     """
 
     transform_test = transforms.Compose([
-        transforms.Resize((height, width)),
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])

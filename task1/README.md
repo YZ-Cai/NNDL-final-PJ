@@ -32,7 +32,7 @@ wget https://www.image-net.org/data/ILSVRC/2012/ILSVRC2012_img_train.tar
 
 Specify the path to load the pretrained model
 ```bash
-export TORCH_HOME="checkpoint/supervised_pretrained"
+export TORCH_HOME="checkpoint/SupervisedPretrained"
 ```
 
 Setup the pretrained models:

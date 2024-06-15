@@ -68,7 +68,7 @@ if __name__ == '__main__':
                                                            last_epoch=-1)
     
     # specify the tensor board log directory
-    args.log_dir = os.path.join(settings.LOG_DIR, 'unsupervised_pretrained',
+    args.log_dir = os.path.join(settings.LOG_DIR, 'unsupervised_pretraining',
                                 settings.TIME_NOW + "_" + args.arch + "_" + args.data) + \
                                 "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size)
     

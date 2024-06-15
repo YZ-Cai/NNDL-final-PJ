@@ -96,13 +96,11 @@ if __name__ == '__main__':
                                        settings.TIME_NOW + "_" + args.net + "_" + args.data + 
                                        "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
 
-    # settings
     # use tensorboard
     if not os.path.exists(settings.LOG_DIR):
         os.mkdir(settings.LOG_DIR)
 
-    # since tensorboard can't overwrite old values
-    # so the only way is to create a new tensorboard log
+    # since tensorboard can't overwrite old values, the only way is to create a new tensorboard log
     writer = SummaryWriter(log_dir=os.path.join(
                            settings.LOG_DIR, args.net,
                            settings.TIME_NOW + "_" + args.net + "_" + args.data) + 

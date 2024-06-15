@@ -4,30 +4,24 @@
 @Project ：NNDL_final 
 @File    ：functions.py
 @Author  ：Iker Zhe, Yuzheng Cai
-@Date    ：2024/6/10 21:30 
+@Date    ：2024/6/15 09:56 
 """
 import os
 import time
-import random
 import torch
-from augmentation.cutmix import cutmix_data, cutmix_criterion
-from augmentation.mixup import mixup_data, mixup_criterion
 
 
-def train(model, data_loader, device, optimizer, loss_function, epoch, batch_size, warmup_dict=None, writer=None,
-          alpha=0.2):
+def train(pretrained_model, model, data_loader, device, optimizer, loss_function, epoch, batch_size, writer=None):
     """
-    :param model: cnn model
+    :param pretrained_model: pretrained model
+    :param model: the final classifier model
     :param data_loader: the data loader
     :param device: cpu or gpu
     :param optimizer: the optimizer
     :param loss_function: the loss function
     :param epoch: the number of iteration
-    :param batch_size: the batch size
-    :param warmup_dict: whether to warmup or not
+    :param batch_size: the batch sizes
     :param writer: whether to writer logs or not
-    :param alpha: the parameter of beta(\alpha, \alpha), default=0.2
-    :return:
     """
     start = time.time()
     model.train()
@@ -37,29 +31,20 @@ def train(model, data_loader, device, optimizer, loss_function, epoch, batch_siz
             images = images.to(device)
         optimizer.zero_grad()
         
-        # cutout has been processed in data loader
-        # randomly use mixup or cutmix
-        if random.random() < 0.5:
-            images, labels_a, labels_b, lam = mixup_data(images, labels, alpha=alpha)
+        # model output
+        if pretrained_model == None:
             outputs = model(images)
-            loss = mixup_criterion(loss_function, outputs, labels_a, labels_b, lam)
         else:
-            images, labels_a, labels_b, lam = cutmix_data(images, labels, alpha=alpha)
-            outputs = model(images)
-            loss = cutmix_criterion(loss_function, outputs, labels_a, labels_b, lam)
+            output_features = pretrained_model.get_features(images)
+            outputs = model(output_features)
+            
+        # train loss
+        loss = loss_function(outputs, labels)
         
+        # step
         loss.backward()
         optimizer.step()
-
-        n_iter = (epoch - 1) * len(data_loader) + batch_index + 1
-
-        last_layer = list(model.children())[-1]
-        for name, para in last_layer.named_parameters():
-            if 'weight' in name:
-                writer.add_scalar('LastLayerGradients/grad_norm2_weights', para.grad.norm(), n_iter)
-            if 'bias' in name:
-                writer.add_scalar('LastLayerGradients/grad_norm2_bias', para.grad.norm(), n_iter)
-
+        
         print('Training Epoch: {epoch} [{trained_samples}/{total_samples}]\tLoss: {:0.4f}\tLR: {:0.6f}'.format(
             loss.item(),
             optimizer.param_groups[0]['lr'],
@@ -69,13 +54,9 @@ def train(model, data_loader, device, optimizer, loss_function, epoch, batch_siz
         ))
 
         # update training loss for each iteration
+        n_iter = (epoch - 1) * len(data_loader) + batch_index + 1
         if writer is not None:
             writer.add_scalar('Train/loss', loss.item(), n_iter)
-
-        if warmup_dict is not None:
-            warmup_scheduler = warmup_dict["warmup_scheduler"]
-            if epoch <= warmup_dict["warmup_num"]:
-                warmup_scheduler.step()
 
     if writer is not None:
         for name, param in model.named_parameters():
@@ -88,23 +69,29 @@ def train(model, data_loader, device, optimizer, loss_function, epoch, batch_siz
     print('Epoch {} training time consumed: {:.2f}s'.format(epoch, finish - start))
 
 
+
 @torch.no_grad()
-def eval_training(model, data_loader, device, loss_function, epoch=0, writer=None):
+def eval_training(pretrained_model, model, data_loader, device, loss_function, epoch=0, writer=None):
     start = time.time()
     model.eval()
 
-    test_loss = 0.0  # cost function error
+    test_loss = 0.0 
     correct = 0.0
 
     for (images, labels) in data_loader:
-
         if device != "cpu":
             labels = labels.to(device)
             images = images.to(device)
 
-        outputs = model(images)
+        # model output
+        if pretrained_model == None:
+            outputs = model(images)
+        else:
+            output_features = pretrained_model.get_features(images)
+            outputs = model(output_features)
+        
+        # loss and accuracy
         loss = loss_function(outputs, labels)
-
         test_loss += loss.item()
         _, preds = outputs.max(1)
         correct += preds.eq(labels).sum()
@@ -126,20 +113,26 @@ def eval_training(model, data_loader, device, loss_function, epoch=0, writer=Non
     return correct.float() / len(data_loader.dataset)
 
 
+
 @torch.no_grad()
-def eval_testing(model, data_loader, device):
+def eval_testing(pretrained_model, model, data_loader, device):
     start = time.time()
     model.eval()
 
     correct = 0.0
-
     for (images, labels) in data_loader:
-
         if device != "cpu":
             labels = labels.to(device)
             images = images.to(device)
 
-        outputs = model(images)
+        # model output
+        if pretrained_model == None:
+            outputs = model(images)
+        else:
+            output_features = pretrained_model.get_features(images)
+            outputs = model(output_features)
+            
+        # accuracy
         _, preds = outputs.max(1)
         correct += preds.eq(labels).sum()
 

@@ -8,12 +8,14 @@
 """
 
 import os
+import torch
 import argparse
 import torch.nn as nn
 from torch import optim
 from conf import settings
-from supervised.resnet import resnet18
-from supervised_pretrained import PretrainedModel
+from utils import get_models
+from functions import train, eval_training
+from torch.utils.tensorboard import SummaryWriter
 from data.dataloader import get_training_dataloader, get_test_dataloader
 
 
@@ -30,6 +32,9 @@ if __name__ == '__main__':
                         help='the model type: SupervisedPretrained or Supervised or UnsupervisedPretrained')
     parser.add_argument('--data', type=str, default='cifar100', help="the dataset cifar100 or cifar10")
     args = parser.parse_args()
+    
+    # load model
+    pretrained_model, model = get_models(args)
         
     # load data
     if args.data == "cifar100":
@@ -45,9 +50,7 @@ if __name__ == '__main__':
         mean=mean,
         std=std,
         batch_size=args.batch_size,
-        data=args.data,
-        height=224 if "Pretrained" in args.model_type else 32,
-        width=224 if "Pretrained" in args.model_type else 32
+        data=args.data
     )
     
     test_loader = get_test_dataloader(
@@ -56,22 +59,10 @@ if __name__ == '__main__':
         batch_size=args.batch_size,
         data=args.data,
     )
-
-    # model, TODO: function
-    device = args.device
-    if args.model_type == "SupervisedPretrained":
-        pretrained_model = PretrainedModel('resnet18', device)
-        model = nn.Linear(pretrained_model.feature_dim(), 100, device=device)
-    elif args.model_type == "Supervised":
-        pretrained_model = None
-        model = resnet18().to(device)
-    else:
-        raise ValueError("the model type should be UnsupervisedPretrained SupervisedPretrained or Supervised, \
-                          but {} is given".format(args.model_type))
         
     # loss function
     if args.criterion == "CrossEntropyLoss":
-        criterion = nn.CrossEntropyLoss()
+        loss_function = nn.CrossEntropyLoss()
     else:
         raise ValueError("the loss function should be cross entropy loss, but {} is given".format(args.criterion))
     
@@ -84,44 +75,82 @@ if __name__ == '__main__':
         raise ValueError("the optimizer should be 'adam' or 'sgd', but got '%s'" % args.optimizer)
     train_scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=settings.MILESTONES, gamma=0.2)
     
+    # use tensorboard
+    if not os.path.exists(settings.LOG_DIR):
+        os.mkdir(settings.LOG_DIR)
+        
+    # since tensorboard can't overwrite old values, the only way is to create a new tensorboard log
+    writer = SummaryWriter(log_dir=os.path.join(
+                           settings.LOG_DIR, args.model_type,
+                           settings.TIME_NOW + "_" + args.model_type + "_" + args.data) + 
+                           "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
+    
+    # create checkpoint folder to save models
+    checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.model_type,
+                                   settings.TIME_NOW + "_" + args.model_type + "_" + args.data + 
+                                   "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
+    if not os.path.exists(checkpoint_path):
+        os.makedirs(checkpoint_path)
+    checkpoint_path = os.path.join(checkpoint_path, '{model_type}-{epoch}-{type}.pth')
+    
+    # create result folder to save accuracy
+    res_path = os.path.join(settings.RES_DIR, args.model_type)
+    if not os.path.exists(res_path):
+        os.makedirs(res_path)
+    res_path = os.path.join(res_path,
+                            args.model_type + "_" + args.data + "_" + args.optimizer + "_lr" + str(args.lr) + 
+                            "_bs" + str(args.batch_size) + "_accuracy.csv")
+    with open(res_path, 'w') as f:
+        f.write("epoch,test_acc\n")
+    
+    # train
+    best_acc = 0.0
+    old_path = None
     for epoch in range(1, settings.EPOCH + 1):
         
-        # train, TODO: function
-        data_loader = train_loader
-        batch_size = args.batch_size
-        import time
-        start = time.time()
-        model.train()
-        for batch_index, (images, labels) in enumerate(data_loader):
-            if device != "cpu":
-                labels = labels.to(device)
-                images = images.to(device)
-            optimizer.zero_grad()
-            
-            if pretrained_model == None:
-                outputs = model(images)
-            else:
-                output_features = pretrained_model.get_features(images)
-                outputs = model(output_features)
-            
-            # train loss and accuracy
-            loss = criterion(outputs, labels)
-            
-            # step
-            loss.backward()
-            optimizer.step()
-            
-            print('Training Epoch: {epoch} [{trained_samples}/{total_samples}]\tLoss: {:0.4f}\tLR: {:0.6f}'.format(
-                loss.item(),
-                optimizer.param_groups[0]['lr'],
-                epoch=epoch,
-                trained_samples=batch_index * batch_size + len(images),
-                total_samples=len(data_loader.dataset),
-            ))
-            
-        finish = time.time()
-        print('Epoch {} training time consumed: {:.2f}s'.format(epoch, finish - start))
-            
-        # test, TODO: function
+        # train the model
+        train(
+            pretrained_model=pretrained_model,
+            model=model,
+            data_loader=train_loader,
+            device=args.device,
+            optimizer=optimizer,
+            loss_function=loss_function,
+            epoch=epoch,
+            batch_size=args.batch_size,
+            writer=writer
+        )
         
+        # test
+        acc = eval_training(
+            pretrained_model=pretrained_model,
+            model=model,
+            data_loader=test_loader,
+            device=args.device,
+            loss_function=loss_function,
+            epoch=epoch,
+            writer=writer
+        )
+        with open(res_path, 'a') as f:
+            f.write(f"{epoch},{acc}\n")
+        
+        # start to save best performance models after learning rate decay to 0.01
+        if epoch > settings.MILESTONES[1] and best_acc < acc:
+            weights_path = checkpoint_path.format(model_type=args.model_type, epoch=epoch, type='best')
+            print('saving weights file to {}'.format(weights_path))
+            torch.save(model.state_dict(), weights_path)
+            # delete old best model
+            if old_path is not None:
+                os.remove(old_path)
+            # update
+            old_path = weights_path
+            best_acc = acc
+            continue
+
+        if not epoch % settings.SAVE_EPOCH:
+            weights_path = checkpoint_path.format(model_type=args.model_type, epoch=epoch, type='regular')
+            print('saving weights file to {}'.format(weights_path))
+            torch.save(model.state_dict(), weights_path)
+
+    writer.close()
     

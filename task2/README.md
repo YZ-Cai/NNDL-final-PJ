@@ -121,7 +121,7 @@ $ python main.py
 
 ## Trained Models
 
-You can download our trained model from [This Link (Password: qqpb)](https://pan.baidu.com/s/10g1PU_lTJH7ghU21uZkGzw). 
+You can download our trained model from [This Link (Password: TODO)](TODO). 
 It has a folder named `checkpoint`, which should be put it in current folder.
 
 ## Testing
@@ -138,45 +138,4 @@ $ python test.py
 
 ## Results
 
-| **Dataset** | **Model** | **Data Augmentation** | **Parameter** | **Accuracy** | **Uncertainty** |
-|:----------------:|:--------------:|:---------------------------:|:------------------:|:---------------------------:|:-----------------------------:|
-|     CIFAR-10     |      VGG16     |             None            |               \              |            93.80            |                   0.28                  |
-|     CIFAR-10     |      VGG16     |            Mixup            |              0.2             |            94.21            |                   0.22                  |
-|     CIFAR-10     |      VGG16     |            Mixup            |              0.4             |            94.36            |                   0.18                  |
-|     CIFAR-10     |      VGG16     |            Mixup            |              0.6             |            94.31            |                   0.09                  |
-|     CIFAR-10     |      VGG16     |            Mixup            |              0.8             |            94.24            |                   0.25                  |
-|     CIFAR-10     |      VGG16     |            Mixup            |               1              |            94.17            |                   0.22                  |
-|     CIFAR-10     |      VGG16     |            Cutout           |               4              |            93.89            |                   0.16                  |
-|     CIFAR-10     |      VGG16     |            Cutout           |               8              |            94.20            |                   0.26                  |
-|     CIFAR-10     |      VGG16     |            Cutout           |              12              |            94.40            |                   0.15                  |
-|     CIFAR-10     |      VGG16     |            Cutout           |              16              |            94.72            |                   0.08                  |
-|     CIFAR-10     |      VGG16     |            Cutout           |              20              |            94.65            |                   0.08                  |
-|     CIFAR-10     |      VGG16     |            Cutmix           |              0.2             |            94.86            |                   0.08                  |
-|     CIFAR-10     |      VGG16     |            Cutmix           |              0.4             |            94.89            |                   0.14                  |
-|     CIFAR-10     |      VGG16     |            Cutmix           |              0.6             |            94.87            |                   0.12                  |
-|     CIFAR-10     |      VGG16     |            Cutmix           |              0.8             |            94.82            |                   0.14                  |
-|     CIFAR-10     |      VGG16     |            Cutmix           |               1              |            94.83            |                   0.15                  |
-|     CIFAR-10     |    ResNet-18   |             None            |               \              |            95.06            |                   0.16                  |
-|     CIFAR-10     |    ResNet-18   |            Mixup            |              0.2             |            95.41            |                   0.14                  |
-|     CIFAR-10     |    ResNet-18   |            Cutout           |              16              |            95.64            |                   0.19                  |
-|     CIFAR-10     |    ResNet-18   |            Cutmix           |              0.2             |            96.12            |                   0.13                  |
-|     CIFAR-100    |      VGG16     |             None            |          \         |            72.44            |              0.55             |
-|     CIFAR-100    |      VGG16     |            Mixup            |         0.2        |            73.66            |              0.21             |
-|     CIFAR-100    |      VGG16     |            Mixup            |         0.4        |            73.75            |              0.18             |
-|     CIFAR-100    |      VGG16     |            Mixup            |         0.6        |            73.43            |              0.33             |
-|     CIFAR-100    |      VGG16     |            Mixup            |         0.8        |            73.67            |              0.32             |
-|     CIFAR-100    |      VGG16     |            Mixup            |          1         |            73.51            |              0.46             |
-|     CIFAR-100    |      VGG16     |            Cutout           |          4         |            72.35            |              0.30             |
-|     CIFAR-100    |      VGG16     |            Cutout           |          8         |            72.18            |              0.27             |
-|     CIFAR-100    |      VGG16     |            Cutout           |         12         |            72.53            |              0.22             |
-|     CIFAR-100    |      VGG16     |            Cutout           |         16         |            72.56            |              0.16             |
-|     CIFAR-100    |      VGG16     |            Cutout           |         20         |            72.26            |              0.14             |
-|     CIFAR-100    |      VGG16     |            Cutmix           |         0.2        |            74.74            |              0.23             |
-|     CIFAR-100    |      VGG16     |            Cutmix           |         0.4        |            74.59            |              0.23             |
-|     CIFAR-100    |      VGG16     |            Cutmix           |         0.6        |            74.37            |              0.42             |
-|     CIFAR-100    |      VGG16     |            Cutmix           |         0.8        |            74.35            |              0.37             |
-|     CIFAR-100    |      VGG16     |            Cutmix           |          1         |            74.20            |              0.15             |
-|     CIFAR-100    |    ResNet-18   |             None            |          \         |            76.18            |              0.18             |
-|     CIFAR-100    |    ResNet-18   |            Mixup            |         0.2        |            77.39            |              0.19             |
-|     CIFAR-100    |    ResNet-18   |            Cutout           |         16         |            75.41            |              0.28             |
-|     CIFAR-100    |    ResNet-18   |            Cutmix           |         0.2        |            79.12            |              0.35             |
+TODO
