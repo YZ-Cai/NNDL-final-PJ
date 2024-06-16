@@ -17,7 +17,7 @@ for lr in "${lrs[@]}"; do
                 --optimizer "$optimizer" \
                 --batch-size "$batch_size" \
                 --data "cifar100" \
-                --device "cuda:3" \
+                --device "cuda:1" \
                 --pretrained-model-path "./checkpoint/SelfSupervisedPretraining/15_June_2024_23h_29m_25s_SelfSupervisedPretraining_imagenet_sgd_lr0.0005_bs128_sr0.01/checkpoint_200.pth.tar"
         done
     done
