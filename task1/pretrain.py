@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch-size', type=int, default=128, help='batch size')
     parser.add_argument('--model-type', type=str, default="SelfSupervisedPretraining", help='the model type: SelfSupervisedPretraining')
     parser.add_argument('--data', type=str, default='imagenet', help="the dataset stl10 or cifar10 or imagenet")
-    parser.add_argument('--sample-ratio', type=float, default=0.01, help='the sample ratio of the dataset')
+    parser.add_argument('--sample-ratio', type=float, default=0.1, help='the sample ratio of the dataset')
     parser.add_argument('--n-views', default=2, type=int, help='Number of views for contrastive learning training.')
     parser.add_argument('--temperature', default=0.07, type=float, help='softmax temperature (default: 0.07)')
     parser.add_argument('--epochs', default=200, type=int, help='number of total epochs to run')
@@ -74,10 +74,12 @@ if __name__ == '__main__':
     # specify the directory
     args.log_dir = os.path.join(settings.LOG_DIR, args.model_type,
                                 settings.TIME_NOW + "_" + args.arch + "_" + args.data) + \
-                                "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size)
+                                "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size) + \
+                                "_sr" + str(args.sample_ratio)
     args.checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.model_type,
                                         settings.TIME_NOW + "_" + args.model_type + "_" + args.data + 
-                                        "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
+                                        "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))+ \
+                                        "_sr" + str(args.sample_ratio)
     if not os.path.exists(args.checkpoint_path):
         os.makedirs(args.checkpoint_path)
     

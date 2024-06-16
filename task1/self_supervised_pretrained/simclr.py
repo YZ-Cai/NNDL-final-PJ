@@ -59,7 +59,7 @@ class SimCLR(object):
         n_iter = 0
         logging.info(f"Start SimCLR training for {self.args.epochs} epochs.")
 
-        for epoch_counter in range(self.args.epochs):
+        for epoch_counter in range(1, self.args.epochs+1):
             for batch_index, (images, _) in enumerate(data_loader):
                 images = torch.cat(images, dim=0)
 
@@ -71,9 +71,7 @@ class SimCLR(object):
                     loss = self.criterion(logits, labels)
 
                 self.optimizer.zero_grad()
-
                 scaler.scale(loss).backward()
-
                 scaler.step(self.optimizer)
                 scaler.update()
                 
@@ -98,15 +96,16 @@ class SimCLR(object):
             if epoch_counter >= 10:
                 self.scheduler.step()
             logging.debug(f"Epoch: {epoch_counter}\tLoss: {loss}\tTop1 accuracy: {top1[0]}")
+            
+            # save model checkpoints
+            if epoch_counter % int(5 / self.args.sample_ratio) == 0:
+                checkpoint_name = f'checkpoint_{epoch_counter}.pth.tar'
+                save_checkpoint({
+                    'epoch': epoch_counter,
+                    'arch': self.args.arch,
+                    'state_dict': self.model.state_dict(),
+                    'optimizer': self.optimizer.state_dict(),
+                }, is_best=False, filename=os.path.join(self.args.checkpoint_path, checkpoint_name))
+                logging.info(f"Model checkpoint and metadata has been saved at {self.args.checkpoint_path}.")
 
         logging.info("Training has finished.")
-        
-        # save model checkpoints
-        checkpoint_name = f'checkpoint_{self.args.epochs}.pth.tar'
-        save_checkpoint({
-            'epoch': self.args.epochs,
-            'arch': self.args.arch,
-            'state_dict': self.model.state_dict(),
-            'optimizer': self.optimizer.state_dict(),
-        }, is_best=False, filename=os.path.join(self.args.checkpoint_path, checkpoint_name))
-        logging.info(f"Model checkpoint and metadata has been saved at {self.args.checkpoint_path}.")

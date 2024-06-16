@@ -84,12 +84,14 @@ if __name__ == '__main__':
     writer = SummaryWriter(log_dir=os.path.join(
                            settings.LOG_DIR, args.model_type,
                            settings.TIME_NOW + "_" + args.model_type + "_" + args.data) + 
-                           "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
+                           "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size) +
+                           (("+" + args.pretrained_model_path.split("/")[-2]) if args.pretrained_model_path else ""))
     
     # create checkpoint folder to save models
     checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.model_type,
                                    settings.TIME_NOW + "_" + args.model_type + "_" + args.data + 
-                                   "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
+                                   "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size) + 
+                                   (("+" + args.pretrained_model_path.split("/")[-2]) if args.pretrained_model_path else ""))
     if not os.path.exists(checkpoint_path):
         os.makedirs(checkpoint_path)
     checkpoint_path = os.path.join(checkpoint_path, '{model_type}-{epoch}-{type}.pth')
@@ -100,7 +102,9 @@ if __name__ == '__main__':
         os.makedirs(res_path)
     res_path = os.path.join(res_path,
                             args.model_type + "_" + args.data + "_" + args.optimizer + "_lr" + str(args.lr) + 
-                            "_bs" + str(args.batch_size) + "_accuracy.csv")
+                            "_bs" + str(args.batch_size) + 
+                            (("+" + args.pretrained_model_path.split("/")[-2]) if args.pretrained_model_path else "") + 
+                            "_accuracy.csv")
     with open(res_path, 'w') as f:
         f.write("epoch,test_acc\n")
     
