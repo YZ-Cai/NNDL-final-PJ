@@ -21,9 +21,8 @@ if __name__ == '__main__':
     # Settings
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cpu', help='the device: cpu or gpu')
-    parser.add_argument('--lr', type=float, default=0.0005, help='initial learning rate')
+    parser.add_argument('--lr', type=float, default=0.005, help='initial learning rate')
     parser.add_argument('--optimizer', type=str, default='sgd', help='optimizer')
-    parser.add_argument('--criterion', type=str, default='CrossEntropyLoss', help='criterion')
     parser.add_argument('--batch-size', type=int, default=128, help='batch size')
     parser.add_argument('--model-type', type=str, default="SelfSupervisedPretraining", help='the model type: SelfSupervisedPretraining')
     parser.add_argument('--data', type=str, default='imagenet', help="the dataset stl10 or cifar10 or imagenet")
@@ -34,15 +33,26 @@ if __name__ == '__main__':
     parser.add_argument('--fp16-precision', action='store_true', help='Whether or not to use 16-bit precision GPU training.')
     parser.add_argument('--log-every-n-steps', default=20, type=int, help='Log every n steps')
     parser.add_argument('--arch', type=str, default='resnet18', help='model architecture: resnet18')
-    parser.add_argument('--out_dim', default=512, type=int, help='feature dimension (default: 512)')
+    parser.add_argument('--out_dim', default=128, type=int, help='feature dimension (default: 128)')
     args = parser.parse_args()
     
     # data
     dataset = ContrastiveLearningDataset('./data/')
-    train_dataset = dataset.get_dataset(args.data, args.n_views)
+    if args.data == "imagenet":
+        mean = settings.IMAGENET_TRAIN_MEAN
+        std = settings.IMAGENET_TRAIN_STD
+    elif args.data == "cifar10":
+        mean = settings.CIFAR10_TRAIN_MEAN
+        std = settings.CIFAR10_TRAIN_STD
+    elif args.data == "stl10":
+        mean = settings.STL10_TRAIN_MEAN
+        std = settings.STL10_TRAIN_STD
+    else:
+        raise ValueError("the data should be cifar10 or stl10 or imagenet, but {} is given.".format(args.data))
+    train_dataset = dataset.get_dataset(args.data, args.n_views, mean, std)
     
     # sample some data for training
-    num_train = int(len(train_dataset) * args.sample_ratio)
+    num_train = int(len(train_dataset) * args.sample_ratio) // args.batch_size * args.batch_size
     indices = torch.randperm(len(train_dataset))[:num_train]
     train_dataset = torch.utils.data.Subset(train_dataset, indices)    
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True,
@@ -54,12 +64,6 @@ if __name__ == '__main__':
         model = ResNetSimCLR(base_model=args.arch, out_dim=args.out_dim)
     else:
         raise ValueError("the model type should be SelfSupervisedPretraining, but {} is given".format(args.model_type))
-        
-    # loss function
-    if args.criterion == "CrossEntropyLoss":
-        criterion = nn.CrossEntropyLoss()
-    else:
-        raise ValueError("the loss function should be cross entropy loss, but {} is given".format(args.criterion))
     
     # optimizer
     if args.optimizer == "sgd":

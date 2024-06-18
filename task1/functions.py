@@ -95,7 +95,7 @@ def eval_training(pretrained_model, model, data_loader, device, loss_function, e
         test_loss += loss.item()
         _, preds = outputs.max(1)
         correct += preds.eq(labels).sum()
-
+        
     finish = time.time()
     print('Test set: Epoch: {}, Average loss: {:.4f}, Accuracy: {:.4f}, Time consumed:{:.2f}s'.format(
         epoch,

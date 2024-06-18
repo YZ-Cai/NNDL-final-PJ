@@ -89,6 +89,7 @@ class SimCLR(object):
                     self.writer.add_scalar('acc/top1', top1[0], global_step=n_iter)
                     self.writer.add_scalar('acc/top5', top5[0], global_step=n_iter)
                     self.writer.add_scalar('learning_rate', self.scheduler.get_lr()[0], global_step=n_iter)
+                    print(f"acc/top1: {top1[0]}\tacc/top5: {top5[0]}")
 
                 n_iter += 1
 

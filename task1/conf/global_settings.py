@@ -20,6 +20,10 @@ CIFAR10_TRAIN_STD = (0.20085774, 0.19870903, 0.20153421)
 IMAGENET_TRAIN_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_TRAIN_STD = (0.229, 0.224, 0.225)
 
+# mean and std of stl10 dataset
+STL10_TRAIN_MEAN = (0.485, 0.456, 0.406)
+STL10_TRAIN_STD = (0.229, 0.224, 0.225)
+
 # directory to save weights file
 CHECKPOINT_PATH = 'checkpoint'
 

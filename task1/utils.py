@@ -31,7 +31,7 @@ def get_models(args):
     device = args.device
     if args.model_type == "SelfSupervisedPretrained":
         pretrained_model = None
-        model = ResNetSimCLR(base_model='resnet18', out_dim=512, mode='test').to(device)
+        model = ResNetSimCLR('resnet18', 100, mode='test').to(device)
         model.load_for_testing(args.pretrained_model_path, device)
     elif args.model_type == "SupervisedPretrained":
         pretrained_model = PretrainedModel('resnet18', device)

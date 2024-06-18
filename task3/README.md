@@ -6,3 +6,4 @@
 - `scikit-image`
 - `opencv-python`
 - `configargparse`
+- `imageio-ffmpeg`
