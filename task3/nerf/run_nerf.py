@@ -824,7 +824,6 @@ def train():
             print('Saved test set')
 
 
-    
         if i%args.i_print==0:
             tqdm.write(f"[TRAIN] Iter: {i} Loss: {loss.item()}  PSNR: {psnr.item()}")
         """

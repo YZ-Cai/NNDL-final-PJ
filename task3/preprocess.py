@@ -4,16 +4,13 @@ import random
 import argparse
 
 
-def extract_frames(data_path, num_train, num_test):
+def extract_frames(data_path, num_images):
     video = cv2.VideoCapture(f'{data_path}/video.mp4')
     os.makedirs(f'{data_path}/images', exist_ok=True)
-    os.makedirs(f'{data_path}/test_imgs', exist_ok=True)
 
     # sample images
     total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-    frame_indices = random.sample(range(total_frames), num_train + num_test)
-    train_indices = frame_indices[:num_train]
-    test_indices = frame_indices[num_train:]
+    frame_indices = random.sample(range(total_frames), num_images)
     
     count = 0
     success = True
@@ -21,12 +18,8 @@ def extract_frames(data_path, num_train, num_test):
         success, image = video.read()
         if not success:
             break
-        if count in train_indices:
+        if count in frame_indices:
             cv2.imwrite(f'{data_path}/images/frame_{count}.jpg', image)
-            train_indices.remove(count)
-        elif count in test_indices:
-            cv2.imwrite(f'{data_path}/test_imgs/frame_{count}.jpg', image)
-            test_indices.remove(count)
         count += 1
     video.release()
     
@@ -34,21 +27,22 @@ def extract_frames(data_path, num_train, num_test):
 # parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', type=str)
-parser.add_argument('--num_train', type=int)
-parser.add_argument('--num_test', type=int)
+parser.add_argument('--from_video', action='store_true', default=False)
+parser.add_argument('--num_images', type=int, default=100)
 args = parser.parse_args()
 
 # prepare data
-extract_frames(f'./data/{args.name}', args.num_train, args.num_test)
+if args.from_video:
+    extract_frames(f'./data/{args.name}', args.num_images)
 
 # write configs
 content = f"""\
 expname = {args.name}
-basedir = ./logs
+basedir = ../logs
 datadir = ../data/{args.name}
 dataset_type = llff
 
-factor = 8
+factor = 2
 llffhold = 8
 
 N_rand = 1024
