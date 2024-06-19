@@ -9,9 +9,12 @@
 
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
+from torchvision.transforms import InterpolationMode
 
 
-def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=True, data="cifar100"):
+
+def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=True, 
+                            data="cifar100", is_pretrained=False):
     """ return training dataloader
     Args:
         mean: mean of cifar100 training dataset
@@ -23,13 +26,21 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=Tr
     Returns: train_data_loader:torch dataloader object
     """
     # construct transform
-    transform_train = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(15),
-        transforms.ToTensor(),
-        transforms.Normalize(mean, std)
-    ])
+    if is_pretrained:
+        transform_train = transforms.Compose([
+            transforms.Resize(224, interpolation=InterpolationMode.BICUBIC),
+            transforms.CenterCrop(224), 
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ])
+    else:
+        transform_train = transforms.Compose([
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(15),
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
 
     # load data
     if data == 'cifar10':
@@ -55,7 +66,8 @@ def get_training_dataloader(mean, std, batch_size=16, num_workers=16, shuffle=Tr
     return train_loader
 
 
-def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, data="cifar100"):
+def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, data="cifar100",
+                        is_pretrained=False):
     """ return training dataloader
     Args:
         mean: mean of cifar100 test dataset
@@ -68,10 +80,19 @@ def get_test_dataloader(mean, std, batch_size=16, num_workers=4, shuffle=True, d
     Returns: cifar100_test_loader:torch dataloader object
     """
 
-    transform_test = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean, std)
-    ])
+    if is_pretrained:
+        transform_test = transforms.Compose([
+            transforms.Resize(224, interpolation=InterpolationMode.BICUBIC),
+            transforms.CenterCrop(224), 
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std),
+        ])
+    else:
+        transform_test = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean, std)
+        ])
+    
     # load data
     if data == 'cifar10':
         test_dataset = datasets.CIFAR10(root='data/',

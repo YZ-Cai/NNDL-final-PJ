@@ -51,7 +51,8 @@ if __name__ == '__main__':
         mean=mean,
         std=std,
         batch_size=args.batch_size,
-        data=args.data
+        data=args.data,
+        is_pretrained="Pretrained" in args.model_type,
     )
     
     test_loader = get_test_dataloader(
@@ -59,6 +60,7 @@ if __name__ == '__main__':
         std=std,
         batch_size=args.batch_size,
         data=args.data,
+        is_pretrained="Pretrained" in args.model_type,
     )
         
     # loss function

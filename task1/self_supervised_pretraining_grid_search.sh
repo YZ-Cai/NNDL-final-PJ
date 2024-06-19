@@ -17,7 +17,7 @@ for lr in "${lrs[@]}"; do
                 --optimizer "$optimizer" \
                 --batch-size "$batch_size" \
                 --data "imagenet" \
-                --device "cuda:1"
+                --device "cuda:2"
         done
     done
 done
