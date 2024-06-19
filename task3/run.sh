@@ -1,8 +1,7 @@
+python preprocess.py --name scene --num_train 200 --num_test 200
 
 cd ./LLFF
-python imgs2poses.py --scenedir ../data/test
-
-python gen_configs.py --name test
+python imgs2poses.py --scenedir ../data/scene
 
 cd ./nerf
-python run_nerf.py --config ../data/test/config.txt
+python run_nerf.py --config ../data/scene/config.txt
