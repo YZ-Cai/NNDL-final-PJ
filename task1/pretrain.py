@@ -21,8 +21,8 @@ if __name__ == '__main__':
     # Settings
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cpu', help='the device: cpu or gpu')
-    parser.add_argument('--lr', type=float, default=0.0005, help='initial learning rate')
-    parser.add_argument('--optimizer', type=str, default='sgd', help='optimizer')
+    parser.add_argument('--lr', type=float, default=0.0001, help='initial learning rate')
+    parser.add_argument('--optimizer', type=str, default='adam', help='optimizer')
     parser.add_argument('--batch-size', type=int, default=128, help='batch size')
     parser.add_argument('--model-type', type=str, default="SelfSupervisedPretraining", help='the model type: SelfSupervisedPretraining')
     parser.add_argument('--data', type=str, default='imagenet', help="the dataset stl10 or cifar10 or imagenet")

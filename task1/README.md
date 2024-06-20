@@ -44,7 +44,7 @@ done
 
 Specify the path to load the pretrained model
 ```bash
-export TORCH_HOME="checkpoint/SupervisedPretrained"
+export TORCH_HOME="checkpoint/SupervisedPretraining"
 ```
 
 Setup the pretrained models:

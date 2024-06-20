@@ -99,10 +99,9 @@ if __name__ == '__main__':
     checkpoint_path = os.path.join(checkpoint_path, '{model_type}-{epoch}-{type}.pth')
     
     # create result folder to save accuracy
-    res_path = os.path.join(settings.RES_DIR, args.model_type)
-    if not os.path.exists(res_path):
-        os.makedirs(res_path)
-    res_path = os.path.join(res_path,
+    if not os.path.exists(settings.RES_DIR):
+        os.makedirs(settings.RES_DIR)
+    res_path = os.path.join(settings.RES_DIR,
                             args.model_type + "_" + args.data + "_" + args.optimizer + "_lr" + str(args.lr) + 
                             "_bs" + str(args.batch_size) + 
                             (("+" + args.pretrained_model_path.split("/")[-2]) if args.pretrained_model_path else "") + 

@@ -89,9 +89,9 @@ In this project, we use the **ResNet-18** and **ViT** to run image classificatio
 - `plot.py`: Image visualization of the *CIFAR100* dataset
 - `train.py`: Training the model
 - `test.py`: Testing the model
-- `run.sh`: a simple bash script to run the **ResNet-18** and **ViT** models with best parameters
-- `resnet18_grid_search.sh`: a bash script to run hyper-parameter grid search for **ResNet-18**
-- `vit_grid_search.sh`: a bash script to run hyper-parameter grid search for **ViT**
+- `run.sh`: The simple bash script to run the **ResNet-18** and **ViT** models with best parameters
+- `resnet18_grid_search.sh`: The bash script to run hyper-parameter grid search for **ResNet-18**
+- `vit_grid_search.sh`: The bash script to run hyper-parameter grid search for **ViT**
 
 ## Key Features
 
@@ -123,8 +123,8 @@ $ python main.py
 
 ## Trained Models
 
-You can download our trained model from [This Link (Password: TODO)](TODO). 
-It has a folder named `checkpoint`, which should be put it in current folder.
+You can download our trained model from [this link (password: NNDL)](https://pan.baidu.com/s/1l_gyF6x9SNJnw8hQthxrZw). 
+It has a folder named `task2/checkpoint`, which should be put it in current folder.
 
 ## Testing
 
