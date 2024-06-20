@@ -95,6 +95,10 @@ In this project, we use the **ResNet-18** and **ViT** to run image classificatio
 
 ## Key Features
 
+By modifying model hyper-parameters, both models have similar size:
+- ResNet-18: 11,220,132 parameters
+- ViT: 11,220,132 parameters
+
 Data augmentation:
 - [Mixup](https://arxiv.org/pdf/1710.09412v2.pdf). The code is in `./augmentation/mixup.py`, and is used in lines 43~45 of `./functions.py`
 - [Cutmix](https://arxiv.org/pdf/1905.04899.pdf). The code is in `./augmentation/cutmix.py`, and is used in lines 47~49 of `./functions.py`

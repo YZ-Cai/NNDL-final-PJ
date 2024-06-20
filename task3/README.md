@@ -20,7 +20,9 @@ Table of Contents
 
 The project is the final project of **DATA620004**.
 In this project, we use the **COLMAP** to preprocess a set of 131 images, then pass them to **NeRF** model to train and render the video.
+
 ![Positions computed by COLMAP](gif/COLMAP.gif)
+
 ![Results rendered by NeRF](gif/scene.gif)
 
 ## Dependencies
