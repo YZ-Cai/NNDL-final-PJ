@@ -1,4 +1,4 @@
-python preprocess.py --name scene --num_train 200 --num_test 200
+python preprocess.py --name scene
 
 cd ./LLFF
 python imgs2poses.py --scenedir ../data/scene

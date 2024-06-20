@@ -43,7 +43,7 @@ datadir = ../data/{args.name}
 dataset_type = llff
 
 factor = 2
-llffhold = 8
+llffhold = 32
 
 N_rand = 1024
 N_samples = 64
@@ -51,6 +51,9 @@ N_importance = 64
 
 use_viewdirs = True
 raw_noise_std = 1e0
+
+i_test = 10000
+i_print = 1000
 """
 with open(f'./data/{args.name}/config.txt', 'w') as f:
     f.write(content)

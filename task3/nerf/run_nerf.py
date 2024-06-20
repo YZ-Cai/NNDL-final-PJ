@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm, trange
-
+from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pyplot as plt
 
 from run_nerf_helpers import *
@@ -148,14 +148,14 @@ def render_path(render_poses, hwf, K, chunk, render_kwargs, gt_imgs=None, savedi
     disps = []
 
     t = time.time()
-    for i, c2w in enumerate(tqdm(render_poses)):
-        print(i, time.time() - t)
+    for i, c2w in enumerate(render_poses):
+        # print(i, time.time() - t)
         t = time.time()
         rgb, disp, acc, _ = render(H, W, K, chunk=chunk, c2w=c2w[:3,:4], **render_kwargs)
         rgbs.append(rgb.cpu().numpy())
         disps.append(disp.cpu().numpy())
-        if i==0:
-            print(rgb.shape, disp.shape)
+        # if i==0:
+        #     print(rgb.shape, disp.shape)
 
         """
         if gt_imgs is not None and render_factor==0:
@@ -167,7 +167,6 @@ def render_path(render_poses, hwf, K, chunk, render_kwargs, gt_imgs=None, savedi
             rgb8 = to8b(rgbs[-1])
             filename = os.path.join(savedir, '{:03d}.png'.format(i))
             imageio.imwrite(filename, rgb8)
-
 
     rgbs = np.stack(rgbs, 0)
     disps = np.stack(disps, 0)
@@ -699,13 +698,14 @@ def train():
 
 
     N_iters = 200000 + 1
-    print('Begin')
-    print('TRAIN views are', i_train)
-    print('TEST views are', i_test)
-    print('VAL views are', i_val)
+    f = os.path.join(basedir, expname, 'indices.txt')
+    with open(f, 'w') as file:
+        file.write(f'TRAIN: {i_train}\n')
+        file.write(f'VAL: {i_val}\n')
+        file.write(f'TEST: {i_test}\n')
 
     # Summary writers
-    # writer = SummaryWriter(os.path.join(basedir, 'summaries', expname))
+    writer = SummaryWriter(os.path.join(basedir, 'runs', expname))
     
     start = start + 1
     for i in trange(start, N_iters):
@@ -815,17 +815,26 @@ def train():
             #     render_kwargs_test['c2w_staticcam'] = None
             #     imageio.mimwrite(moviebase + 'rgb_still.mp4', to8b(rgbs_still), fps=30, quality=8)
 
-        if i%args.i_testset==0 and i > 0:
-            testsavedir = os.path.join(basedir, expname, 'testset_{:06d}'.format(i))
-            os.makedirs(testsavedir, exist_ok=True)
-            print('test poses shape', poses[i_test].shape)
-            with torch.no_grad():
-                render_path(torch.Tensor(poses[i_test]).to(device), hwf, K, args.chunk, render_kwargs_test, gt_imgs=images[i_test], savedir=testsavedir)
-            print('Saved test set')
-
-
         if i%args.i_print==0:
             tqdm.write(f"[TRAIN] Iter: {i} Loss: {loss.item()}  PSNR: {psnr.item()}")
+            writer.add_scalar('Train/loss', loss.item(), i)
+            writer.add_scalar('Train/psnr', psnr.item(), i)
+            
+            with torch.no_grad():
+                if i % args.i_testset == 0 and i > 0:
+                    testsavedir = os.path.join(basedir, expname, 'testset_{:06d}'.format(i))
+                    os.makedirs(testsavedir, exist_ok=True)
+                    test_rgb, _ = render_path(torch.Tensor(poses[i_test]).to(device), hwf, K, args.chunk, render_kwargs_test, 
+                                              gt_imgs=images[i_test], savedir=testsavedir)
+                else:
+                    test_rgb, _ = render_path(torch.Tensor(poses[i_test]).to(device), hwf, K, args.chunk, render_kwargs_test)
+                    
+                test_loss = img2mse(torch.tensor(test_rgb), images[i_test])
+                test_psnr = mse2psnr(test_loss)
+                tqdm.write(f"[TEST] Iter: {i} Loss: {test_loss}  PSNR: {test_psnr.item()}")
+                writer.add_scalar('Test/loss', test_loss, i)
+                writer.add_scalar('Test/psnr', test_psnr, i)
+                
         """
             print(expname, i, psnr.numpy(), loss.numpy(), global_step.numpy())
             print('iter time {:.05f}'.format(dt))
@@ -869,6 +878,8 @@ def train():
         """
 
         global_step += 1
+        
+    writer.close()
 
 
 if __name__=='__main__':
