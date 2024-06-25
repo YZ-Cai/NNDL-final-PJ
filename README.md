@@ -5,7 +5,7 @@
 Table of Contents
 =================
 
-* [This is the task 2 of final project of "Neural Network and Deep Learning"](#this-is-the-final-project-of-neural-network-and-deep-learning)
+* [This is the final project of "Neural Network and Deep Learning"](#this-is-the-final-project-of-neural-network-and-deep-learning)
    * [Introduction](#introduction)
    * [Task 1](#task-1)
    * [Task 2](#task-2)

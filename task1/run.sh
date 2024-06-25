@@ -11,9 +11,9 @@ nohup python pretrain.py --device cuda:2 --sample-ratio 0.5 > run_self_supervise
 nohup python pretrain.py --device cuda:3 --sample-ratio 1.0 > run_self_supervised_pretraining_sr1.0.txt 2>&1 &
 
 # run self-supervised pretrained model
-nohup python train.py --model-type SelfSupervisedPretrained \
-                      --pretrained-model-path ./checkpoint/SelfSupervisedPretraining/19_June_2024_03h_18m_30s_SelfSupervisedPretraining_imagenet_adam_lr0.005_bs128_sr0.1/checkpoint_50.pth.tar \
-                      --device cuda:1 > run_self_supervised_pretrained.txt 2>&1 &
+nohup python train.py --model-type SelfSupervisedPretrained --optimizer sgd --lr 0.01 \
+                      --pretrained-model-path ./checkpoint/SelfSupervisedPretraining/19_June_2024_03h_17m_03s_SelfSupervisedPretraining_imagenet_adam_lr0.0001_bs128_sr1.0/checkpoint_50.pth.tar \
+                      --device cuda:1 > run_self_supervised_pretrained_sr1.txt 2>&1 &
 
 # run grid search for self-supervised pretrained model
 nohup bash self_supervised_pretrained_grid_search.sh > self_supervised_pretrained_grid_search.txt 2>&1 &
