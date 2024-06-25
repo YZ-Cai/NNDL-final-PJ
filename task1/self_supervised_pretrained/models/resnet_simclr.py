@@ -33,7 +33,7 @@ class ResNetSimCLR(nn.Module):
         return self.backbone(x)
     
     
-    def load_for_testing(self, model_path, device):
+    def load(self, model_path, device, freeze_backbone=False):
         checkpoint = torch.load(model_path, map_location=device)
         state_dict = checkpoint['state_dict']
 
@@ -47,6 +47,7 @@ class ResNetSimCLR(nn.Module):
         self.backbone.load_state_dict(state_dict, strict=False)
         
         # freeze all layers but the last fc
-        for name, param in self.backbone.named_parameters():
-            if name not in ['fc.weight', 'fc.bias']:
-                param.requires_grad = False
+        if freeze_backbone:
+            for name, param in self.backbone.named_parameters():
+                if name not in ['fc.weight', 'fc.bias']:
+                    param.requires_grad = False

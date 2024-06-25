@@ -32,16 +32,22 @@ def get_models(args):
     if args.model_type == "SelfSupervisedPretrained":
         pretrained_model = None
         model = ResNetSimCLR('resnet18', 100, mode='test').to(device)
-        model.load_for_testing(args.pretrained_model_path, device)
+        model.load(args.pretrained_model_path, device, freeze_backbone=True)
+    elif args.model_type == "SelfSupervisedPretrainedFinetune":
+        pretrained_model = None
+        model = ResNetSimCLR('resnet18', 100, mode='test').to(device)
+        model.load(args.pretrained_model_path, device, freeze_backbone=False)
     elif args.model_type == "SupervisedPretrained":
         pretrained_model = PretrainedModel('resnet18', device)
         model = nn.Linear(pretrained_model.feature_dim(), 100, device=device)
+    elif args.model_type == "SupervisedPretrainedFinetune":
+        pretrained_model = None
+        model = PretrainedModel('resnet18', device, finetune=True, num_classes=100).model
     elif args.model_type == "Supervised":
         pretrained_model = None
         model = resnet18().to(device)
     else:
-        raise ValueError("the model type should be SelfSupervisedPretrained, SupervisedPretrained or Supervised, \
-                          but {} is given".format(args.model_type))
+        raise ValueError("Do not support {}!".format(args.model_type))
     return pretrained_model, model
 
 

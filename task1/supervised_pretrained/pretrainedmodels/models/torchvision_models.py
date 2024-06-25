@@ -111,11 +111,13 @@ def update_state_dict(state_dict):
     return state_dict
 
 def load_pretrained(model, num_classes, settings):
-    assert num_classes == settings['num_classes'], \
-        "num_classes should be {}, but is {}".format(settings['num_classes'], num_classes)
     state_dict = model_zoo.load_url(settings['url'])
     state_dict = update_state_dict(state_dict)
-    model.load_state_dict(state_dict)
+    if num_classes != settings['num_classes']:
+        print("Warning: num_classes should be {}, but is {}. do not load the last layer".format(settings['num_classes'], num_classes))
+        model.load_state_dict(state_dict, strict=False)
+    else:
+        model.load_state_dict(state_dict)
     model.input_space = settings['input_space']
     model.input_size = settings['input_size']
     model.input_range = settings['input_range']
@@ -326,11 +328,11 @@ def modify_resnets(model):
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
+        x = self.avgpool(x)
         return x
 
     def logits(self, features):
-        x = self.avgpool(features)
-        x = x.view(x.size(0), -1)
+        x = features.view(features.size(0), -1)
         x = self.last_linear(x)
         return x
 

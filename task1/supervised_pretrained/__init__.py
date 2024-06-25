@@ -13,11 +13,12 @@ import pretrainedmodels.utils as utils
 
 
 class PretrainedModel:
-    def __init__(self, model_name, device='cpu'):
-        self.model = pretrainedmodels.__dict__[model_name](num_classes=1000, pretrained='imagenet')
+    def __init__(self, model_name, device='cpu', finetune=False, num_classes=1000):
+        self.model = pretrainedmodels.__dict__[model_name](num_classes=num_classes, pretrained='imagenet')
         if device != "cpu":
             self.model = self.model.to(device)
-        self.model.eval()
+        if finetune == False:
+            self.model.eval()
 
     def get_features(self, input):
         input = torch.autograd.Variable(input, requires_grad=False)
