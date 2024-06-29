@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch-size', type=int, default=128, help='batch size')
     parser.add_argument('--net', type=str, default="resnet18", help='the models name')
     parser.add_argument('--data', type=str, default='cifar100', help="the dataset cifar100 or cifar10")
+    parser.add_argument('--patch_size', type=int, default=4, help="the patch size of the ViT models")
     parser.add_argument('--warmup-num', type=int, default=0, help="the epoch number of warmup, 0 means no warmup")
     args = parser.parse_args()
 
@@ -93,8 +94,8 @@ if __name__ == '__main__':
 
     else:
         checkpoint_path = os.path.join(settings.CHECKPOINT_PATH, args.net,
-                                       settings.TIME_NOW + "_" + args.net + "_" + args.data + 
-                                       "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
+                                       settings.TIME_NOW + "_" + args.net + "_" + args.data + "_" + args.optimizer + 
+                                       "_lr" + str(args.lr) + "_bs" + str(args.batch_size)) + "_patch" + str(args.patch_size)
 
     # use tensorboard
     if not os.path.exists(settings.LOG_DIR):
@@ -103,8 +104,8 @@ if __name__ == '__main__':
     # since tensorboard can't overwrite old values, the only way is to create a new tensorboard log
     writer = SummaryWriter(log_dir=os.path.join(
                            settings.LOG_DIR, args.net,
-                           settings.TIME_NOW + "_" + args.net + "_" + args.data) + 
-                           "_" + args.optimizer + "_lr" + str(args.lr) + "_bs" + str(args.batch_size))
+                           settings.TIME_NOW + "_" + args.net + "_" + args.data) + "_" + args.optimizer + 
+                           "_lr" + str(args.lr) + "_bs" + str(args.batch_size) + "_patch" + str(args.patch_size))
     input_tensor = torch.Tensor(1, 3, 32, 32)
     if args.device != "cpu":
         input_tensor = input_tensor.to(args.device)
@@ -118,7 +119,7 @@ if __name__ == '__main__':
     # create result folder to save accuracy
     res_path = os.path.join(settings.RES_DIR, 
                             args.net + "_" + args.data + "_" + args.optimizer + "_lr" + str(args.lr) + 
-                            "_bs" + str(args.batch_size) + "_accuracy.csv")
+                            "_bs" + str(args.batch_size) + "_patch" + str(args.patch_size) + "_accuracy.csv")
     with open(res_path, 'w') as f:
         f.write("epoch,test_acc\n")
 

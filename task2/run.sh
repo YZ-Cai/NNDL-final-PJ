@@ -16,13 +16,13 @@ python test.py --net resnet152 --device cuda:0
 nohup python train.py --net vit --device cuda:1 --optimizer sgd --lr 0.01 --batch-size 64 > run_vit.txt 2>&1 &
 python test.py --net vit --device cuda:1
 
-# run vit-base: 85703524 parameters
-nohup python train.py --net vit-base --device cuda:0 --optimizer sgd --lr 0.01 --batch-size 64 > run_vit_base.txt 2>&1 &
-python test.py --net vit-base --device cuda:0
+# run vit-base: 85195204 parameters
+nohup python train.py --net vit-base --device cuda:3 --optimizer sgd --lr 0.01 --batch-size 64 > run_vit_base.txt 2>&1 &
+python test.py --net vit-base --device cuda:3
 
 # run vit-large: 303137380 parameters
-nohup python train.py --net vit-large --device cuda:0 --optimizer sgd --lr 0.01 --batch-size 64 > run_vit_large.txt 2>&1 &
-python test.py --net vit-large --device cuda:0
+nohup python train.py --net vit-large --device cuda:3 --optimizer sgd --lr 0.01 --batch-size 64 > run_vit_large.txt 2>&1 &
+python test.py --net vit-large --device cuda:3
 
 # run grid search for resnet18
 nohup bash resnet18_grid_search.sh > resnet18_grid_search.txt 2>&1 &

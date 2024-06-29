@@ -161,13 +161,13 @@ def get_network(args):
         net = resnet50_pytorch()
     elif args.net == 'vit':
         from models.vit import ViT
-        net = ViT()
+        net = ViT(patch_size=args.patch_size)
     elif args.net == 'vit-base':
         from models.vit import ViT
-        net = ViT(patch_size=16, dim=768, depth=12, heads=12, mlp_dim=3072, dim_head=64)
+        net = ViT(patch_size=args.patch_size, dim=768, depth=12, heads=12, mlp_dim=3072, dim_head=64)
     elif args.net == 'vit-large':
         from models.vit import ViT
-        net = ViT(patch_size=16, dim=1024, depth=24, heads=16, mlp_dim=4096, dim_head=64)
+        net = ViT(patch_size=args.patch_size, dim=1024, depth=24, heads=16, mlp_dim=4096, dim_head=64)
     else:
         print('the network name you have entered is not supported yet')
         sys.exit()

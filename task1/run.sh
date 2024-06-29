@@ -16,7 +16,7 @@ nohup python pretrain.py --device cuda:3 --sample-ratio 1.0 > run_self_supervise
 #######################################
 
 # run self-supervised pretrained model
-nohup python train.py --model-type SelfSupervisedPretrained --optimizer sgd --lr 0.01 \
+nohup python train.py --model-type SelfSupervisedPretrained --optimizer adam --lr 0.001 \
                       --pretrained-model-path ./checkpoint/SelfSupervisedPretraining/19_June_2024_03h_17m_03s_SelfSupervisedPretraining_imagenet_adam_lr0.0001_bs128_sr1.0/checkpoint_50.pth.tar \
                       --device cuda:1 > run_self_supervised_pretrained_sr1.txt 2>&1 &
 
