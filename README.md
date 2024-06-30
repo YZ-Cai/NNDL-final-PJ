@@ -19,17 +19,21 @@ In this project, we have three tasks:
 - Task 2: compare Transformer-based and CNN-based image classification models on CIFAR-100
 - Task 3: Object Reconstruction and Novel View Synthesis based on NeRF
 
+All the checkpoints of the best models can be found in [this link (password: NNDL)](https://pan.baidu.com/s/1l_gyF6x9SNJnw8hQthxrZw).
 Next, we briefly introduce each task and some important results.
 Other detailed descriptions and guides are left in the README of the directory for each task.
 
 ## Task 1
 
-In this task, we compare the following three methods for training ResNet-18 on CIFAR-100.
-- **Self-supervised pretrain** on ImageNet (SimCLR with ResNet-18) + supervised train fro the last linear layer on CIFAR-100
-- **Supervised pretrain** on ImageNet (ResNet-18) + supervised train for the last linear layer on CIFAR-100
-- **Supervised train** on the full ResNet-18 model on CIFAR-100
+In this task, we compare the following five methods for training ResNet-18 on CIFAR-100.
+- **Self-supervised pretrain + Finetune**: After pre-training the ResNet-18 on ImageNet with self-supervised learning framework SimCLR, we finetune all its parameters on CIFAR-100.
+- **Self-supervised pretrain + Linear classifier**: After pre-training the ResNet-18 on ImageNet with self-supervised learning framework SimCLR, we train for the last linear layer on CIFAR-100 while freezing the other parameters.
+- **Supervised pretrain + Finetune**: After pre-training the ResNet-18 on ImageNet with supervised learning, we finetune all its parameters on CIFAR-100.
+- **Supervised pretrain + Linear classifier**: After pre-training the ResNet-18 on ImageNet with supervised learning, we train for the last linear layer on CIFAR-100 while freezing the other parameters.
+- **Supervised train from scratch**: We directly train the ResNet-18 model on CIFAR-100.
 
-results: TODO
+The supervised training from scratch has the testing accuracy of 71.75%, and the supervised pretrain + finetune achieves 80.45% testing accuracy.
+However, supervised pretrain + linear classifier only has 70.43% testing accuracy. As for self-supervised pretraining with SimCLR, since we are unable to pretrain enough epochs due to the huge amount of images in ImageNet, it suffers from lower accuracy.
 
 Please refer to [README of task 1](./task1/README.md) for more details.
 

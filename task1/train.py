@@ -29,7 +29,8 @@ if __name__ == '__main__':
     parser.add_argument('--criterion', type=str, default='CrossEntropyLoss', help='criterion')
     parser.add_argument('--batch-size', type=int, default=128, help='batch size')
     parser.add_argument('--model-type', type=str, default="SelfSupervisedPretrained", 
-                        help='the model type: SelfSupervisedPretrained or SupervisedPretrained or Supervised')
+                        help='the model type: SelfSupervisedPretrained or SelfSupervisedPretrainedFinetune \
+                              or SupervisedPretrained or SSupervisedPretrainedFinetune or Supervised')
     parser.add_argument('--data', type=str, default='cifar100', help="the dataset cifar100 or cifar10")
     parser.add_argument('--pretrained-model-path', type=str, default='')
     args = parser.parse_args()
